@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团队建设RPG</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+        .panel-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--light);
+            color: var(--dark);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            background-color: var(--light);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        .currency {
+            color: var(--warning);
+        }
+        .level {
+            color: var(--secondary);
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            flex-grow: 1;
+            min-width: 120px;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        button.danger {
+            background-color: var(--danger);
+        }
+        button.success {
+            background-color: var(--secondary);
+        }
+        button.warning {
+            background-color: var(--warning);
+        }
+        .invite-link {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: rgba(46, 204, 113, 0.1);
+            border: 1px dashed var(--secondary);
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        .log {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .bonus {
+            color: var(--warning);
+            font-weight: bold;
+        }
+        .success-text {
+            color: var(--secondary);
+        }
+        .danger-text {
+            color: var(--danger);
+        }
+        .character {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .character-avatar {
+            width: 80px;
+            height: 80px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #7f8c8d;
+        }
+        .character-info {
+            flex-grow: 1;
+        }
+        .character-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .character-class {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        .skills {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .skill {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .skill:hover {
+            background-color: #e9ecef;
+        }
+        .skill-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .skill-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .skill-cost {
+            font-size: 12px;
+            color: var(--warning);
+            margin-top: 5px;
+        }
+        .skill.unlocked {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left: 3px solid var(--secondary);
+        }
+        .skill.locked {
+            opacity: 0.6;
+        }
+        .equipment {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .equip-item {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .equip-item:hover {
+            background-color: #e9ecef;
+        }
+        .equip-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .equip-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .equip-cost {
+            font-size: 12px;
+            color: var(--warning);
+            margin-top: 5px;
+        }
+        .equip-owned {
+            font-size: 12px;
+            color: var(--secondary);
+            margin-top: 5px;
+        }
+        .tab-container {
+            margin-top: 20px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .team-member {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        .member-info {
+            flex-grow: 1;
+        }
+        .member-name {
+            font-weight: bold;
+        }
+        .member-level {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .member-contribution {
+            font-size: 12px;
+            color: var(--warning);
+        }
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .skills, .equipment {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>团队建设RPG</h1>
+        <div class="subtitle">通过角色扮演游戏的方式发展你的团队，每成功邀请一人可获得2 EUR奖金</div>
+        
+        <div class="character">
+            <div class="character-avatar">👤</div>
+            <div class="character-info">
+                <div class="character-name" id="player-name">领导者</div>
+                <span class="character-class" id="player-class">团队领袖</span>
+                <div>等级 <span class="level" id="player-level">1</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="player-exp-bar" style="width: 0%"></div>
+                </div>
+                <div>经验值: <span id="player-exp">0</span>/<span id="player-next-level">100</span></div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="panel">
+                <div class="panel-header">团队状态</div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">团队成员</div>
+                        <div class="stat-value" id="team-count">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">邀请奖金</div>
+                        <div class="stat-value"><span class="currency" id="bonus-earned">0</span> EUR</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">邀请链接</div>
+                        <div class="stat-value" id="invites-sent">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">转化率</div>
+                        <div class="stat-value" id="conversion-rate">20%</div>
+                    </div>
+                </div>
+                
+                <div class="invite-link">
+                    <p>你的邀请链接：</p>
+                    <p id="invite-link">https://imgp4o.com/invite/user123</p>
+                    <button onclick="copyInviteLink()">复制链接</button>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="sendInvite()">发送邀请</button>
+                    <button class="success" onclick="trainMember()">培训成员</button>
+                    <button class="warning" onclick="motivateTeam()">激励团队</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-header">游戏日志</div>
+                <div class="log" id="game-log">
+                    <div class="log-entry">欢迎来到团队建设RPG！开始邀请新成员发展你的团队吧。</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" onclick="openTab('skills')">技能树</div>
+                <div class="tab" onclick="openTab('equipment')">装备</div>
+                <div class="tab" onclick="openTab('team')">团队成员</div>
+                <div class="tab" onclick="openTab('achievements')">成就</div>
+            </div>
+            
+            <div id="skills" class="tab-content active">
+                <div class="skills">
+                    <div class="skill locked" onclick="unlockSkill('recruiting')">
+                        <div class="skill-name">高效招募</div>
+                        <div class="skill-desc">提高邀请转化率5%</div>
+                        <div class="skill-cost">消耗: 50 EUR</div>
+                    </div>
+                    <div class="skill locked" onclick="unlockSkill('training')">
+                        <div class="skill-name">专业培训</div>
+                        <div class="skill-desc">团队成员贡献增加10%</div>
+                        <div class="skill-cost">消耗: 75 EUR</div>
+                    </div>
+                    <div class="skill locked" onclick="unlockSkill('leadership')">
+                        <div class="skill-name">领导力</div>
+                        <div class="skill-desc">解锁高级团队成员位置</div>
+                        <div class="skill-cost">消耗: 100 EUR</div>
+                    </div>
+                    <div class="skill locked" onclick="unlockSkill('networking')">
+                        <div class="skill-name">社交网络</div>
+                        <div class="skill-desc">每次邀请发送2个链接</div>
+                        <div class="skill-cost">消耗: 80 EUR</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="equipment" class="tab-content">
+                <div class="equipment">
+                    <div class="equip-item" onclick="buyEquipment('automatic-inviter')">
+                        <div class="equip-name">自动邀请器</div>
+                        <div class="equip-desc">每小时自动发送1个邀请</div>
+                        <div class="equip-cost">价格: 150 EUR</div>
+                        <div class="equip-owned" id="automatic-inviter-owned">已拥有: 0</div>
+                    </div>
+                    <div class="equip-item" onclick="buyEquipment('training-manual')">
+                        <div class="equip-name">培训手册</div>
+                        <div class="equip-desc">提高培训效果20%</div>
+                        <div class="equip-cost">价格: 120 EUR</div>
+                        <div class="equip-owned" id="training-manual-owned">已拥有: 0</div>
+                    </div>
+                    <div class="equip-item" onclick="buyEquipment('motivational-poster')">
+                        <div class="equip-name">激励海报</div>
+                        <div class="equip-desc">团队激励效果提升30%</div>
+                        <div class="equip-cost">价格: 100 EUR</div>
+                        <div class="equip-owned" id="motivational-poster-owned">已拥有: 0</div>
+                    </div>
+                    <div class="equip-item" onclick="buyEquipment('premium-link')">
+                        <div class="equip-name">高级链接</div>
+                        <div class="equip-desc">邀请转化率提高15%</div>
+                        <div class="equip-cost">价格: 200 EUR</div>
+                        <div class="equip-owned" id="premium-link-owned">已拥有: 0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="team" class="tab-content">
+                <div id="team-members-list">
+                    <div class="team-member">
+                        <div class="member-avatar">👑</div>
+                        <div class="member-info">
+                            <div class="member-name">你 (领导者)</div>
+                            <div class="member-level">等级 1</div>
+                        </div>
+                        <div class="member-contribution">+2 EUR/邀请</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="achievements" class="tab-content">
+                <p>成就系统将在未来更新中推出...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        const gameState = {
+            player: {
+                name: "领导者",
+                class: "团队领袖",
+                level: 1,
+                exp: 0,
+                nextLevelExp: 100,
+                skills: []
+            },
+            team: {
+                count: 1,
+                members: [
+                    {
+                        id: 1,
+                        name: "你",
+                        role: "领导者",
+                        level: 1,
+                        contribution: 2,
+                        trained: false
+                    }
+                ],
+                maxMembers: 5,
+                motivation: 1.0
+            },
+            economy: {
+                bonusEarned: 0,
+                invitesSent: 0,
+                conversionRate: 0.2,
+                baseConversion: 0.2
+            },
+            skills: {
+                recruiting: { unlocked: false, effect: 0.05, cost: 50 },
+                training: { unlocked: false, effect: 0.1, cost: 75 },
+                leadership: { unlocked: false, effect: 0, cost: 100 },
+                networking: { unlocked: false, effect: 0, cost: 80 }
+            },
+            equipment: {
+                'automatic-inviter': { owned: 0, price: 150, effect: 1 },
+                'training-manual': { owned: 0, price: 120, effect: 0.2 },
+                'motivational-poster': { owned: 0, price: 100, effect: 0.3 },
+                'premium-link': { owned: 0, price: 200, effect: 0.15 }
+            },
+            achievements: [],
+            lastInviteTime: 0
+        };
+
+        // DOM元素
+        const playerNameEl = document.getElementById('player-name');
+        const playerClassEl = document.getElementById('player-class');
+        const playerLevelEl = document.getElementById('player-level');
+        const playerExpEl = document.getElementById('player-exp');
+        const playerNextLevelEl = document.getElementById('player-next-level');
+        const playerExpBarEl = document.getElementById('player-exp-bar');
+        
+        const teamCountEl = document.getElementById('team-count');
+        const bonusEarnedEl = document.getElementById('bonus-earned');
+        const invitesSentEl = document.getElementById('invites-sent');
+        const conversionRateEl = document.getElementById('conversion-rate');
+        const gameLogEl = document.getElementById('game-log');
+        const inviteLinkEl = document.getElementById('invite-link');
+        const teamMembersListEl = document.getElementById('team-members-list');
+
+        // 生成随机用户ID
+        function generateUserId() {
+            return 'user' + Math.floor(Math.random() * 1000000);
+        }
+
+        // 更新邀请链接
+        function updateInviteLink() {
+            inviteLinkEl.textContent = `https://imgp4o.com/invite/${generateUserId()}`;
+        }
+
+        // 复制邀请链接
+        function copyInviteLink() {
+            navigator.clipboard.writeText(inviteLinkEl.textContent)
+                .then(() => addLog("邀请链接已复制到剪贴板！"));
+        }
+
+        // 发送邀请
+        function sendInvite() {
+            const now = Date.now();
+            if (now - gameState.lastInviteTime < 1000) {
+                addLog("操作太快了，请稍后再试！");
+                return;
+            }
+            gameState.lastInviteTime = now;
+            
+            // 基础邀请
+            sendSingleInvite();
+            
+            // 检查是否有网络技能，可以发送额外邀请
+            if (gameState.skills.networking.unlocked) {
+                setTimeout(() => {
+                    addLog("社交网络技能激活：发送额外邀请！");
+                    sendSingleInvite();
+                }, 500);
+            }
+        }
+
+        function sendSingleInvite() {
+            gameState.economy.invitesSent++;
+            invitesSentEl.textContent = gameState.economy.invitesSent;
+            addLog(`你发送了第 ${gameState.economy.invitesSent} 个邀请...`);
+            
+            // 模拟邀请结果（有一定概率成功）
+            setTimeout(() => {
+                if (Math.random() < gameState.economy.conversionRate) {
+                    // 邀请成功
+                    const newMemberId = gameState.team.members.length + 1;
+                    const newMember = {
+                        id: newMemberId,
+                        name: `成员${newMemberId}`,
+                        role: "初级成员",
+                        level: 1,
+                        contribution: 1,
+                        trained: false
+                    };
+                    
+                    gameState.team.members.push(newMember);
+                    gameState.team.count = gameState.team.members.length;
+                    const bonus = calculateBonus();
+                    gameState.economy.bonusEarned += bonus;
+                    
+                    updateTeamStats();
+                    addLog(`🎉 邀请成功！${newMember.name}加入你的团队。获得 <span class="bonus">${bonus} EUR</span> 奖金。`);
+                    addExp(10);
+                    updateInviteLink();
+                    
+                    // 更新团队成员列表
+                    renderTeamMembers();
+                } else {
+                    addLog("邀请未成功，对方没有注册。");
+                }
+            }, 1000);
+        }
+
+        // 计算奖金
+        function calculateBonus() {
+            let total = 0;
+            gameState.team.members.forEach(member => {
+                let contribution = member.contribution;
+                if (member.trained) {
+                    contribution *= 1.2; // 培训基础加成20%
+                    if (gameState.skills.training.unlocked) {
+                        contribution *= (1 + gameState.skills.training.effect);
+                    }
+                    if (gameState.equipment['training-manual'].owned > 0) {
+                        contribution *= (1 + gameState.equipment['training-manual'].effect);
+                    }
+                }
+                total += contribution;
+            });
+            
+            // 团队激励效果
+            total *= gameState.team.motivation;
+            
+            return Math.round(total * 100) / 100;
+        }
+
+        // 培训成员
+        function trainMember() {
+            if (gameState.team.count <= 1) {
+                addLog("你还没有团队成员可以培训！");
+                return;
+            }
+            
+            // 找出未培训的成员
+            const untrainedMembers = gameState.team.members.filter(m => !m.trained && m.role !== "领导者");
+            if (untrainedMembers.length === 0) {
+                addLog("所有成员都已接受过培训！");
+                return;
+            }
+            
+            // 随机选择一个成员进行培训
+            const randomIndex = Math.floor(Math.random() * untrainedMembers.length);
+            const member = untrainedMembers[randomIndex];
+            member.trained = true;
+            member.contribution *= 1.2; // 基础培训增加20%
+            
+            if (gameState.skills.training.unlocked) {
+                member.contribution *= (1 + gameState.skills.training.effect);
+            }
+            
+            if (gameState.equipment['training-manual'].owned > 0) {
+                member.contribution *= (1 + gameState.equipment['training-manual'].effect);
+            }
+            
+            member.contribution = Math.round(member.contribution * 100) / 100;
+            member.role = "受训成员";
+            
+            addLog(`📚 ${member.name} 完成了培训！现在贡献值为 ${member.contribution} EUR/邀请。`);
+            renderTeamMembers();
+        }
+
+        // 激励团队
+        function motivateTeam() {
+            const motivationBoost = 0.2; // 基础激励20%
+            let totalBoost = motivationBoost;
+            
+            if (gameState.equipment['motivational-poster'].owned > 0) {
+                totalBoost += gameState.equipment['motivational-poster'].effect;
+            }
+            
+            gameState.team.motivation = 1 + totalBoost;
+            addLog(`💪 团队激励成功！下次邀请奖金提高 ${Math.round(totalBoost * 100)}%。`);
+            
+            // 激励效果持续3次邀请
+            let count = 0;
+            const originalMotivation = gameState.team.motivation;
+            const motivationInterval = setInterval(() => {
+                if (count >= 3 || gameState.team.motivation !== originalMotivation) {
+                    clearInterval(motivationInterval);
+                    if (gameState.team.motivation === originalMotivation) {
+                        gameState.team.motivation = 1.0;
+                        addLog("团队激励效果已结束。");
+                    }
+                }
+                count++;
+            }, 3000);
+        }
+
+        // 解锁技能
+        function unlockSkill(skillName) {
+            const skill = gameState.skills[skillName];
+            
+            if (skill.unlocked) {
+                addLog("这个技能已经解锁了！");
+                return;
+            }
+            
+            if (gameState.economy.bonusEarned < skill.cost) {
+                addLog(`💰 余额不足，需要${skill.cost} EUR解锁此技能。`);
+                return;
+            }
+            
+            gameState.economy.bonusEarned -= skill.cost;
+            skill.unlocked = true;
+            gameState.player.skills.push(skillName);
+            
+            // 应用技能效果
+            switch(skillName) {
+                case 'recruiting':
+                    gameState.economy.conversionRate += skill.effect;
+                    conversionRateEl.textContent = `${Math.round(gameState.economy.conversionRate * 100)}%`;
+                    break;
+                case 'leadership':
+                    gameState.team.maxMembers = 10;
+                    addLog("团队上限增加到10人！");
+                    break;
+            }
+            
+            updateTeamStats();
+            addLog(`✅ 成功解锁技能: ${getSkillName(skillName)}！`);
+            renderSkills();
+            addExp(15);
+        }
+
+        // 购买装备
+        function buyEquipment(equipName) {
+            const equip = gameState.equipment[equipName];
+            
+            if (gameState.economy.bonusEarned < equip.price) {
+                addLog(`💰 余额不足，需要${equip.price} EUR购买此装备。`);
+                return;
+            }
+            
+            gameState.economy.bonusEarned -= equip.price;
+            equip.owned++;
+            
+            // 应用装备效果
+            switch(equipName) {
+                case 'premium-link':
+                    gameState.economy.conversionRate = gameState.economy.baseConversion + equip.effect;
+                    conversionRateEl.textContent = `${Math.round(gameState.economy.conversionRate * 100)}%`;
+                    break;
+            }
+            
+            updateTeamStats();
+            addLog(`🛒 购买了 ${getEquipName(equipName)}！`);
+            renderEquipment();
+            addExp(10);
+        }
+
+        // 添加经验值
+        function addExp(amount) {
+            gameState.player.exp += amount;
+            if (gameState.player.exp >= gameState.player.nextLevelExp) {
+                levelUp();
+            }
+            
+            playerExpEl.textContent = gameState.player.exp;
+            const percentage = (gameState.player.exp / gameState.player.nextLevelExp) * 100;
+            playerExpBarEl.style.width = `${percentage}%`;
+        }
+
+        // 升级
+        function levelUp() {
+            gameState.player.level++;
+            gameState.player.exp -= gameState.player.nextLevelExp;
+            gameState.player.nextLevelExp = Math.floor(gameState.player.nextLevelExp * 1.5);
+            
+            playerLevelEl.textContent = gameState.player.level;
+            playerNextLevelEl.textContent = gameState.player.nextLevelExp;
+            
+            addLog(`🎊 恭喜升级！你现在是 ${gameState.player.class} 等级 ${gameState.player.level}。`);
+            
+            // 升级奖励
+            if (gameState.player.level % 2 === 0) {
+                gameState.economy.baseConversion += 0.02;
+                gameState.economy.conversionRate = gameState.economy.baseConversion;
+                if (gameState.equipment['premium-link'].owned > 0) {
+                    gameState.economy.conversionRate += gameState.equipment['premium-link'].effect;
+                }
+                conversionRateEl.textContent = `${Math.round(gameState.economy.conversionRate * 100)}%`;
+                addLog("你的基础邀请转化率提高了2%！");
+            }
+        }
+
+        // 更新团队统计数据
+        function updateTeamStats() {
+            teamCountEl.textContent = gameState.team.count;
+            bonusEarnedEl.textContent = gameState.economy.bonusEarned;
+            conversionRateEl.textContent = `${Math.round(gameState.economy.conversionRate * 100)}%`;
+        }
+
+        // 添加日志条目
+        function addLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = message;
+            gameLogEl.appendChild(logEntry);
+            gameLogEl.scrollTop = gameLogEl.scrollHeight;
+        }
+
+        // 渲染技能树
+        function renderSkills() {
+            document.querySelectorAll('.skill').forEach(el => {
+                const skillName = el.onclick.toString().match(/'([^']+)'/)[1];
+                const skill = gameState.skills[skillName];
+                
+                el.classList.remove('unlocked', 'locked');
+                if (skill.unlocked) {
+                    el.classList.add('unlocked');
+                } else {
+                    el.classList.add('locked');
+                }
+            });
+        }
+
+        // 渲染装备
+        function renderEquipment() {
+            for (const equipName in gameState.equipment) {
+                const el = document.getElementById(`${equipName}-owned`);
+                if (el) {
+                    el.textContent = `已拥有: ${gameState.equipment[equipName].owned}`;
+                }
+            }
+        }
+
+        // 渲染团队成员
+        function renderTeamMembers() {
+            teamMembersListEl.innerHTML = '';
+            
+            gameState.team.members.forEach(member => {
+                const memberEl = document.createElement('div');
+                memberEl.className = 'team-member';
+                
+                let avatar = '👤';
+                if (member.role === "领导者") avatar = '👑';
+                else if (member.trained) avatar = '🎓';
+                
+                memberEl.innerHTML = `
+                    <div class="member-avatar">${avatar}</div>
+                    <div class="member-info">
+                        <div class="member-name">${member.name} (${member.role})</div>
+                        <div class="member-level">等级 ${member.level}</div>
+                    </div>
+                    <div class="member-contribution">+${member.contribution} EUR/邀请</div>
+                `;
+                
+                teamMembersListEl.appendChild(memberEl);
+            });
+        }
+
+        // 获取技能名称
+        function getSkillName(skillKey) {
+            const skills = {
+                'recruiting': '高效招募',
+                'training': '专业培训',
+                'leadership': '领导力',
+                'networking': '社交网络'
+            };
+            return skills[skillKey] || skillKey;
+        }
+
+        // 获取装备名称
+        function getEquipName(equipKey) {
+            const equipment = {
+                'automatic-inviter': '自动邀请器',
+                'training-manual': '培训手册',
+                'motivational-poster': '激励海报',
+                'premium-link': '高级链接'
+            };
+            return equipment[equipKey] || equipKey;
+        }
+
+        // 切换标签页
+        function openTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 取消所有标签的活动状态
+            document.querySelectorAll('.tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 显示选定的标签内容
+            document.getElementById(tabName).classList.add('active');
+            
+            // 设置选定标签为活动状态
+            event.currentTarget.classList.add('active');
+        }
+
+        // 自动邀请功能
+        function startAutoInviter() {
+            if (gameState.equipment['automatic-inviter'].owned > 0) {
+                setInterval(() => {
+                    if (gameState.team.count < gameState.team.maxMembers) {
+                        sendSingleInvite();
+                    }
+                }, 3600000); // 每小时一次
+            }
+        }
+
+        // 初始化游戏
+        function initGame() {
+            updateInviteLink();
+            updateTeamStats();
+            renderSkills();
+            renderEquipment();
+            renderTeamMembers();
+            startAutoInviter();
+        }
+
+        // 启动游戏
+        initGame();
+    </script>
+</body>
+</html>
